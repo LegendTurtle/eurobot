@@ -127,5 +127,6 @@ void debugPult() {
 
 
 void loop() {
-  debugPult();
+  send_data();
+  //debugPult();
 }
