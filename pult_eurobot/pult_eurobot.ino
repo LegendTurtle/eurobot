@@ -10,7 +10,9 @@
 #define DIO 4
 
 #include "GyverTM1637.h"
+#include "SoftwareSerial.h"
 
+SoftwareSerial ArdSerial (7, 6);
 GyverTM1637 disp(CLK, DIO);
 uint32_t Now, clocktimer;
 boolean flag;
@@ -46,14 +48,14 @@ void send_data() {
   readStick();
   if (but2_dat) {
     setPrognoz();
-    int data[] = { ROBOT_ID, 0, dest_x1, orient1, but1_dat, 0, dest_x2, orient2, but2_dat, prognoz };
+    byte data[] = { ROBOT_ID, 0, dest_x1, orient1, but1_dat, 0, dest_x2, orient2, but2_dat, prognoz };
     for (auto x : data) {
-      Serial.write(x);
+      ArdSerial.write(x);
     }
   } else {
-    int data[] = { ROBOT_ID, dest_y1, dest_x1, orient1, but1_dat, dest_y2, dest_x2, orient2, but2_dat, prognoz };
+    byte data[] = { ROBOT_ID, dest_y1, dest_x1, orient1, but1_dat, dest_y2, dest_x2, orient2, but2_dat, prognoz };
     for (auto x : data) {
-      Serial.write(x);
+      ArdSerial.write(x);
     }
   }
 }
@@ -105,7 +107,10 @@ void readStick() {
 void setup() {
   pinMode(but1, INPUT_PULLUP);
   pinMode(but2, INPUT_PULLUP);
+  pinMode(7, INPUT);
+  pinMode(6, OUTPUT);
   Serial.begin(9600);
+  ArdSerial.begin(9600);
   start_x = analogRead(X1);
   start_y = analogRead(Y1);
   start_x2 = analogRead(X2);
