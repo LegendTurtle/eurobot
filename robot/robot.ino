@@ -1,27 +1,28 @@
-#include "SoftwareSerial.h"
+#define robotID 253
+#define DIO 7
+#define CLK 8
 
-#define robotID 252
-#define rx 7;
-#define tx 6;
+#include "GyverTM1637.h"
 
-int data[]; 
+GyverTM1637 disp(CLK, DIO);
 
-SoftwareSerial ArdSerial(rx, tx);
+byte data[10] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
 void setup() {
-  pinMode(rx, INPUT);
-  pinMode(tx, OUTPUT);
-  ArdSerial.begin(9600);
+  Serial.begin(9600);
+  disp.clear();
+  disp.brightness(7);
 }
 
 void loop() {
-  if (ArdSerial.available() > 0) {
-    byte startByte = ArdSerial.read();
+  if (Serial.available() > 0) {
+    byte startByte = Serial.read();
     while (startByte != robotID) {
-      startByte = ArdSerial.read();
-    } else {
-      data = Serial.readbytes(9)
+      startByte = Serial.read();
     }
+    Serial.readBytes(data, 10);
   }
-  Serial.println(data[0]);
+  delayMicroseconds(200);
+  disp.clear();
+  disp.displayInt(data[9]);
 }
